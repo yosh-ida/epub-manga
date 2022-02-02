@@ -30,7 +30,7 @@ streambuf* res(int IDR_RODATA)
 	return buf;
 }
 
-epub::epub(std::ostream& stream) : z(stream, 128), title("a"), author("b"), publisher("c"), cover(0)
+epub::epub(std::ostream& stream, uint8_t c, const epub::BookInfo info): z(stream, c), info(info)
 {
 	//  kobospan kobo.1.1
 
@@ -54,7 +54,7 @@ void epub::nav()
 		"<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\" xml:lang=\"ja\">\n"
 		"<head>\n"
 		"<meta charset=\"utf-8\" />\n"
-		"<title>" + title + "</title>\n"
+		"<title>" + info.title + "</title>\n"
 		"<style type=\"text/css\">\n"
 		"ol{ list-style: none; }\n"
 		"img.gaiji{ width: 1em; height: 1em; display: inline; }\n"
@@ -65,7 +65,7 @@ void epub::nav()
 		"<nav epub:type=\"toc\" id=\"toc\">\n"
 		u8"<h1>–ÚŽŸ</h1>\n"
 		"<ol>\n"
-		u8"<li><a href=\"xhtml/0.xhtml\">•\Ž†</a></li>\n"
+		u8"<li><a href=\"xhtml/" + to_string(info.cover) + u8".xhtml\">•\Ž†</a></li>\n"
 		"</ol>\n"
 		"</nav>\n"
 		"</body>\n"
@@ -82,16 +82,16 @@ void epub::opf()
 	string content = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 		"<package xmlns=\"http://www.idpf.org/2007/opf\" unique-identifier=\"unique-id\" version=\"3.0\" xml:lang=\"ja\" prefix=\"ebpaj: http://www.ebpaj.jp/\" >\n"
 		"\t<metadata xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n"
-		"\t\t<dc:title id=\"title01\">" + title + "</dc:title>\n"
-		"\t\t<dc:creator id=\"creator01\">" + author + "</dc:creator>\n"
+		"\t\t<dc:title id=\"title01\">" + info.title + "</dc:title>\n"
+		"\t\t<dc:creator id=\"creator01\">" + info.author[0] + "</dc:creator>\n"
 		"\t\t<meta refines=\"#creator01\" property=\"role\" scheme=\"marc:relators\">aut</meta>\n"
 		"\t\t<meta refines=\"#creator01\" property=\"display-seq\">1</meta>\n"
-		"\t\t<dc:publisher id=\"publisher\">" + publisher + "</dc:publisher>\n"
+		"\t\t<dc:publisher id=\"publisher\">" + info.publisher + "</dc:publisher>\n"
 		"\t\t<dc:language>ja</dc:language>\n"
 		"\t\t<dc:identifier id=\"unique-id\">urn:uuid:498f69a9-649c-44f5-a4e3-7f26bd99ece4</dc:identifier>\n"
 		"\t\t<meta name=\"book-type\" content=\"comic\" />\n"
 		"\t\t<meta property=\"dcterms:modified\">2019-11-06T00:00:00Z</meta>\n"
-		"\t\t<meta name=\"cover\" content=\"pic" + to_string(cover) + "\" />\n"
+		"\t\t<meta name=\"cover\" content=\"pic" + to_string(info.cover) + "\" />\n"
 		"\t\t<dc:type>comic</dc:type>\n"
 		"\t</metadata>\n"
 		"\t<manifest>\n"
@@ -120,7 +120,7 @@ void epub::opf()
 		content += "\t\t<itemref idref=\"xhtml" + to_string(i) + "\" />\n";
 	content += "\t</spine>\n"
 		"\t<guide>\n"
-		"\t\t<reference type=\"cover\" title=\"Cover\" href=\"xhtml/" + to_string(cover) + ".xhtml\" />\n"
+		"\t\t<reference type=\"cover\" title=\"Cover\" href=\"xhtml/" + to_string(info.cover) + ".xhtml\" />\n"
 		"\t</guide>\n"
 		"</package>";
 
