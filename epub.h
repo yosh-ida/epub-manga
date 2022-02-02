@@ -9,12 +9,12 @@ class epub
 public:
 	struct BookInfo
 	{
-		std::string title;
+		std::string& title;
 		uint16_t cover;
-		std::vector<std::string> author;
-		std::vector <std::string> supporter;
-		std::string publisher;
-		std::vector<std::pair<uint16_t, std::string>> section;
+		std::vector<std::string>& author;
+		std::vector<std::string>& supporter;
+		std::string& publisher;
+		std::vector<std::pair<uint16_t, std::string>>& section;
 	};
 
 private:

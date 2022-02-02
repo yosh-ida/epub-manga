@@ -30,7 +30,7 @@ streambuf* res(int IDR_RODATA)
 	return buf;
 }
 
-epub::epub(std::ostream& stream, uint8_t c, const epub::BookInfo info): z(stream, c), info(info)
+epub::epub(std::ostream& stream, uint8_t c, const epub::BookInfo info) : z(stream, c), info(info)
 {
 	//  kobospan kobo.1.1
 
@@ -64,9 +64,12 @@ void epub::nav()
 
 		"<nav epub:type=\"toc\" id=\"toc\">\n"
 		u8"<h1>–ÚŽŸ</h1>\n"
-		"<ol>\n"
-		u8"<li><a href=\"xhtml/" + to_string(info.cover) + u8".xhtml\">•\Ž†</a></li>\n"
-		"</ol>\n"
+		"<ol>\n";
+
+	for (auto s : info.section)
+		content += u8"<li><a href=\"xhtml/" + to_string(s.first) + u8".xhtml\">" + s.second + u8"</a></li>\n";
+
+	content += "</ol>\n"
 		"</nav>\n"
 		"</body>\n"
 		"</html>\n";

@@ -25,19 +25,11 @@ auto map_find(map<K, list<V>>& m, K key)
 
 void wstring2string(wchar_t* src, string &dist)
 {
-	const uint16_t bufsize = 256;
-	char buf[bufsize];
-
-	while (*src != L'\0')
-	{
-		int k = WideCharToMultiByte(CP_UTF8, 0, src, -1, buf, bufsize, NULL, NULL);
-		if (k <= 0)
-			break;
-		if (buf[k - 1] == '\0')
-			k--;
-		src += k;
-		dist.append(buf, k);
-	}
+	uint16_t k = WideCharToMultiByte(CP_UTF8, 0, src, -1, NULL, 0, NULL, NULL);
+	dist.resize(k);
+	WideCharToMultiByte(CP_UTF8, 0, src, -1, const_cast<char*>(dist.c_str()), k, NULL, NULL);
+	if (*dist.rbegin() == '\0')
+		dist.resize(k - 1);
 }
 
 int wmain(int argc, wchar_t* argv[])
@@ -64,13 +56,18 @@ int wmain(int argc, wchar_t* argv[])
 	string& output = *(++args["-"].begin());
 	string& title = *args["t"].begin();
 	vector<string> author = vector<string>(args["a"].begin(), args["a"].end());
-	vector<string> section = vector<string>(args["s"].begin(), args["s"].end());
 	string& publisher = *args["p"].begin();
+	vector<string> supporter = vector<string>();
 	uint16_t cover = stoi(args["c"].begin()->c_str());
 	uint16_t c = stoi(args["o"].begin()->c_str());
 
+	vector<string> sv = vector<string>(args["sec"].begin(), args["sec"].end());
+	vector<pair<uint16_t, string>> section;
+	for (int i = 0; i < sv.size(); i += 2)
+		section.push_back(make_pair(stoi(sv[i]), sv[i + 1]));
+
 	ofstream ofs(output, ios_base::binary);
-	epub::BookInfo info{ title, cover, author, {}, publisher, {} };
+	epub::BookInfo info{ title, cover, author, supporter, publisher, section };
 	epub e(ofs, c, info);
 
 	fs::directory_iterator it(input);
