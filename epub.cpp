@@ -4,9 +4,11 @@
 #include <stdio.h>
 #include <map>
 
+#pragma comment(lib, "rpcrt4.lib")
+
 using namespace std;
 
-static const map<string, string> MIMES = { { ".jpeg", "image/jpeg" }, {".jpg", "image/jpeg"}, {".bmp", "image/bmp"}, {".svg", "image/svg+xml"}, {".gif", "image/gif"} };
+static const map<string, string> MIMES = { { ".jpeg", "image/jpeg" }, {".jpg", "image/jpeg"}, {".bmp", "image/bmp"}, {".svg", "image/svg+xml"}, {".webp", "image/webp"}, {".gif", "image/gif"} };
 
 struct membuf : streambuf
 {
@@ -82,6 +84,12 @@ void epub::nav()
 
 void epub::opf()
 {
+	uuid_t value;
+	UuidCreate(&value);
+	// char uuid[37];
+	RPC_CSTR uuid;
+	UuidToString(&value, &uuid);
+
 	string content = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 		"<package xmlns=\"http://www.idpf.org/2007/opf\" unique-identifier=\"unique-id\" version=\"3.0\" xml:lang=\"ja\" prefix=\"ebpaj: http://www.ebpaj.jp/\" >\n"
 		"\t<metadata xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n"
@@ -91,7 +99,7 @@ void epub::opf()
 		"\t\t<meta refines=\"#creator01\" property=\"display-seq\">1</meta>\n"
 		"\t\t<dc:publisher id=\"publisher\">" + info.publisher + "</dc:publisher>\n"
 		"\t\t<dc:language>ja</dc:language>\n"
-		"\t\t<dc:identifier id=\"unique-id\">urn:uuid:498f69a9-649c-44f5-a4e3-7f26bd99ece4</dc:identifier>\n"
+		"\t\t<dc:identifier id=\"unique-id\">urn:uuid:" + (char*)uuid + "</dc:identifier>\n"
 		"\t\t<meta name=\"book-type\" content=\"comic\" />\n"
 		"\t\t<meta property=\"dcterms:modified\">2019-11-06T00:00:00Z</meta>\n"
 		"\t\t<meta name=\"cover\" content=\"pic" + to_string(info.cover) + "\" />\n"
@@ -149,14 +157,14 @@ void epub::addPage(const istream& in, const char* ext)
 		"<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\" xml:lang=\"ja\">\n"
 		"<head>\n"
 		"<meta charset=\"UTF-8\"/>\n"
-		"<title>name</title>\n"
+		"<title>" + to_string(pages) + ".xhtml</title>\n"
 		"<link rel=\"stylesheet\" type=\"text/css\" href=\"../style.css\"/>\n"
 		"<meta name=\"viewport\" content=\"width=764, height=1200\"/>\n"
 		"</head>\n"
 		"<body>\n"
 		"<div id=\"top\">\n"
-		"<svg class=\"rightpage\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"\n xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n width=\"100%\" height=\"100%\" viewBox=\"0 0 764 1200\">\n"
-		"<image width=\"764\" height=\"1200\" xlink:href=\"../image/"
+		"<svg class=\"centerpage\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"\n xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n width=\"100%\" height=\"100%\" viewBox=\"0 0 764 1200\">\n"
+		"<image width=\"100%\" height=\"100%\" xlink:href=\"../image/"
 		+ to_string(pages) + ext + "\"/>\n"
 		"</svg>\n"
 		"</div>\n"
