@@ -32,20 +32,20 @@ class zip
 	char relative_offset_of_local_header[4];
 
 	//	system info
-	const char const version_needed_to_extract[2] = { 0x14, 0x00 };	//	version 2.0
-	const char const general_purpose_bit_flag[2] = { 0x00, 0x00 };	//	no encrypt 
-	const char const compression_method[2] = { 0x00, 0x00 };	//	no compress
-	const char const compression_method_deflate[2] = { 0x08, 0x00 };	//	deflate
-	const char const version_made_by[2] = { 0x14, 0x00 };	//	version 2.0 / MS-DOS and OS/2 (FAT / VFAT / FAT32 file systems)
+	const char version_needed_to_extract[2] = { 0x14, 0x00 };	//	version 2.0
+	const char general_purpose_bit_flag[2] = { 0x00, 0x00 };	//	no encrypt 
+	const char compression_method[2] = { 0x00, 0x00 };	//	no compress
+	const char compression_method_deflate[2] = { 0x08, 0x00 };	//	deflate
+	const char version_made_by[2] = { 0x14, 0x00 };	//	version 2.0 / MS-DOS and OS/2 (FAT / VFAT / FAT32 file systems)
 
 	//	signatures
-	const char const local_file_header_signature[4] = { 0x50, 0x4b, 0x03, 0x04 };
-	const char const central_file_header_signature[4] = { 0x50, 0x4b, 0x01, 0x02 };
-	const char const end_of_central_dir_signature[4] = { 0x50, 0x4b, 0x05, 0x06 };
+	const char local_file_header_signature[4] = { 0x50, 0x4b, 0x03, 0x04 };
+	const char central_file_header_signature[4] = { 0x50, 0x4b, 0x01, 0x02 };
+	const char end_of_central_dir_signature[4] = { 0x50, 0x4b, 0x05, 0x06 };
 
 	//	last modified time
-	const char const last_mod_file_time[2] = { (char)0x9B, 0x01 };	//	random time
-	const char const last_mod_file_date[2] = { 0x0B, 0x51 };	//	random time
+	const char last_mod_file_time[2] = { (char)0x9B, 0x01 };	//	random time
+	const char last_mod_file_date[2] = { 0x0B, 0x51 };	//	random time
 
 	std::stringstream compress(const std::stringstream& data, const size_t size, const int level) const;
 public:
